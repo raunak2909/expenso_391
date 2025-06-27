@@ -1,6 +1,7 @@
 
 import 'package:expenso_391/ui/home/home_page.dart';
 import 'package:expenso_391/ui/intro/intro.dart';
+import 'package:expenso_391/ui/sign_up/signup_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../ui/login/login_page.dart';
@@ -17,6 +18,7 @@ class AppRoutes {
     splash: (_) => SplashPage(),
     intro: (_) => IntroPage(),
     login: (_) => LoginScreen(),
+    signup: (_) => SignupScreen(),
     home: (_) => HomePage(),
 
   };

@@ -65,13 +65,25 @@ class DBHelper {
   }
 
   ///queries
-  registerUser({required UserModel newUser}) async {
+  Future<bool> registerUser({required UserModel newUser}) async {
     var db = await initDB();
-
-    db.insert(TABLE_USER, newUser.toMap());
+    int rowsEffected = await db.insert(TABLE_USER, newUser.toMap());
+    return rowsEffected>0;
   }
 
-  ifUserExists() {}
+  Future<bool> ifUserEmailExists({required String email}) async{
+    var db = await initDB();
+    var data = await db.query(TABLE_USER, where: "$COLUMN_USER_EMAIL = ? ", whereArgs: [email]);
+    return data.isNotEmpty;
+
+  }
+
+  Future<bool> ifUserMobileExists({required String mobNo}) async{
+    var db = await initDB();
+    var data = await db.query(TABLE_USER, where: "$COLUMN_USER_MOB_NO = ?", whereArgs: [mobNo]);
+    return data.isNotEmpty;
+
+  }
 
   authenticateUser() {}
 
