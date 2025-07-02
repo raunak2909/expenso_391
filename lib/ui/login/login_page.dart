@@ -1,11 +1,19 @@
 
+import 'package:expenso_391/ui/sign_up/bloc/user_bloc.dart';
+import 'package:expenso_391/ui/sign_up/bloc/user_event.dart';
+import 'package:expenso_391/ui/sign_up/bloc/user_state.dart';
 import 'package:expenso_391/utils/app_route/app_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../utils/ui_helper/styles.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool isLoading = false;
+  bool check = true;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,15 +52,51 @@ class LoginScreen extends StatelessWidget {
                       decoration: inputDecoration('Password'),
                     ),
                     SizedBox(height: 11,),
-                    ElevatedButton(
-                        onPressed: (){
+                    BlocConsumer<UserBloc, UserState>(
+                      listenWhen: (ps,cs){
+                        return check;
+                      },
+                      listener: (_, state){
+
+                        if(state is UserLoadingState){
+                          isLoading = true;
+                        }
+
+                        if(state is UserSuccessState){
+                          isLoading = false;
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Successfully logged in")));
                           Navigator.pushReplacementNamed(context, AppRoutes.home);
-                        },
-                        style: buttonStyle,
-                        child: Text('Login')
+                        }
+
+                        if(state is UserFailureState){
+                          isLoading = false;
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.errorMsg)));
+                        }
+
+                      },
+                      builder: (context, state) {
+                        return ElevatedButton(
+                            onPressed: (){
+                              check = true;
+                              //Navigator.pushReplacementNamed(context, AppRoutes.home);
+                              context.read<UserBloc>().add(AuthenticateUserEvent(email: emailController.text, pass: passwordController.text));
+                            },
+                            style: buttonStyle,
+                            child: isLoading ? Row(
+                              children: [
+                                CircularProgressIndicator(),
+                                SizedBox(
+                                  height: 11,
+                                ),
+                                Text('Logging in...')
+                              ],
+                            ) : Text('Login')
+                        );
+                      }
                     ),
                     SizedBox(height: 11,),
                     TextButton(onPressed: (){
+                      check = false;
                       Navigator.pushNamed(context, AppRoutes.signup);
                     }, child: Text("Don't have an account? Sign up",
                       style: TextStyle(color: Colors.black87),))

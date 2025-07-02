@@ -1,6 +1,8 @@
 import 'package:expenso_391/ui/login/login_page.dart';
 import 'package:expenso_391/utils/app_route/app_routes.dart';
+import 'package:expenso_391/utils/constants/app_constants.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../home/home_page.dart';
 
@@ -51,7 +53,10 @@ class _IntroState extends State<IntroPage> {
                   ),
                 ),
                 child: InkWell(
-                  onTap: (){
+                  onTap: () async{
+                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                    prefs.setBool(AppConstants.PREF_IS_INTRO_LOADED_KEY, true);
+
                     Navigator.pushReplacementNamed(context, AppRoutes.login);
                   },
                   child: Text("Let's Start",style: TextStyle(

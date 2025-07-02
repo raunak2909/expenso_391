@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:expenso_391/utils/constants/app_constants.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../models/user_model.dart';
@@ -68,24 +70,76 @@ class DBHelper {
   Future<bool> registerUser({required UserModel newUser}) async {
     var db = await initDB();
     int rowsEffected = await db.insert(TABLE_USER, newUser.toMap());
-    return rowsEffected>0;
+    return rowsEffected > 0;
   }
 
-  Future<bool> ifUserEmailExists({required String email}) async{
+  Future<bool> ifUserEmailExists({required String email}) async {
     var db = await initDB();
-    var data = await db.query(TABLE_USER, where: "$COLUMN_USER_EMAIL = ? ", whereArgs: [email]);
+    var data = await db.query(
+      TABLE_USER,
+      where: "$COLUMN_USER_EMAIL = ? ",
+      whereArgs: [email],
+    );
     return data.isNotEmpty;
-
   }
 
-  Future<bool> ifUserMobileExists({required String mobNo}) async{
+  Future<bool> ifUserMobileExists({required String mobNo}) async {
     var db = await initDB();
-    var data = await db.query(TABLE_USER, where: "$COLUMN_USER_MOB_NO = ?", whereArgs: [mobNo]);
+    var data = await db.query(
+      TABLE_USER,
+      where: "$COLUMN_USER_MOB_NO = ?",
+      whereArgs: [mobNo],
+    );
     return data.isNotEmpty;
-
   }
 
-  authenticateUser() {}
+  Future<int> authenticateUser({
+    required String email,
+    required String pass,
+  }) async {
+    var db = await initDB();
+
+    List<Map<String, dynamic>> mData = await db.query(
+      TABLE_USER,
+      where: "$COLUMN_USER_EMAIL = ?",
+      whereArgs: [email],
+    );
+
+    if (mData.isNotEmpty) {
+      List<Map<String, dynamic>> mData = await db.query(
+        TABLE_USER,
+        where: "$COLUMN_USER_EMAIL = ? AND $COLUMN_USER_PASS = ?",
+        whereArgs: [email, pass],
+      );
+
+      if (mData.isNotEmpty) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt(AppConstants.PREF_USER_ID_KEY, mData[0][COLUMN_USER_ID]);
+
+        return 1; //success
+      } else {
+        return 3; // incorrect password
+      }
+    } else {
+      return 2; // email does not exist
+    }
+  }
+
+  Future<UserModel?> getUserDetails() async {
+    var db = await initDB();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt(AppConstants.PREF_USER_ID_KEY) ?? 0;
+
+    var mData = await db.query(TABLE_USER, where: "$COLUMN_USER_ID = ?", whereArgs: ["$userId"]);
+
+    if(mData.isNotEmpty){
+      UserModel currUser = UserModel.fromMap(mData[0]);
+      return currUser;
+    } else {
+      return null;
+    }
+  }
 
   addExpense() async {}
 }

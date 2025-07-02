@@ -1,5 +1,9 @@
+import 'package:expenso_391/ui/sign_up/bloc/user_bloc.dart';
+import 'package:expenso_391/ui/sign_up/bloc/user_event.dart';
+import 'package:expenso_391/ui/sign_up/bloc/user_state.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomePage extends StatefulWidget{
   @override
@@ -23,6 +27,12 @@ class _HomePageState extends State<HomePage> {
     "November",
     "December"
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<UserBloc>().add(UserDetailEvent());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,33 +66,58 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             SizedBox(height: 10,),
-            ListTile(
-              leading: ClipOval(
-                  child: SizedBox(
-                    width: 55,
-                  height: 55,
-                  child: Image.network("https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg",fit: BoxFit.cover,))),
-              title: Text("Morning",style: TextStyle(
-                color: Colors.grey
-              ),),
-              subtitle: Text("Laxman Tak",maxLines:1,overflow: TextOverflow.ellipsis,style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600
-              ),),
-              trailing: DropdownButton(
-                icon: Icon(Icons.keyboard_arrow_down_outlined),
-                  underline: SizedBox(),
-                  dropdownColor: Colors.grey.shade200,
-                  elevation: 15,
-                  value:selectedMonth,
-                  items: months.map((month){
-                    return DropdownMenuItem(value: month,child: Text("$month"));
-                  }).toList(),
-                  onChanged: (value){
-                    setState(() {
-                      selectedMonth=value!;
-                    });
-                  }),
+            BlocBuilder<UserBloc, UserState>(
+              builder: (context, state) {
+
+                if(state is UserLoadingState){
+                  return Center(child: CircularProgressIndicator(),);
+                }
+
+                if(state is UserDetailsState){
+                 return ListTile(
+                    leading: ClipOval(
+                        child: SizedBox(
+                            width: 55,
+                            height: 55,
+                            child: Image.network("https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg",fit: BoxFit.cover,))),
+                    title: Text("Morning",style: TextStyle(
+                        color: Colors.grey
+                    ),),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(state.currentUser.name,maxLines:1,overflow: TextOverflow.ellipsis,style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600
+                        ),),
+                        Text(state.currentUser.email,maxLines:1,overflow: TextOverflow.ellipsis,style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w200
+                        ),),
+                      ],
+                    ),
+                    trailing: DropdownButton(
+                        icon: Icon(Icons.keyboard_arrow_down_outlined),
+                        underline: SizedBox(),
+                        dropdownColor: Colors.grey.shade200,
+                        elevation: 15,
+                        value:selectedMonth,
+                        items: months.map((month){
+                          return DropdownMenuItem(value: month,child: Text("$month"));
+                        }).toList(),
+                        onChanged: (value){
+                          setState(() {
+                            selectedMonth=value!;
+                          });
+                        }),
+                  );
+                }
+
+                if(state is UserFailureState){
+                  return Center(child: Text("Something went wrong"),);
+                }
+                return Container();
+              }
             ),
             SizedBox(height: 10,),
             Container(

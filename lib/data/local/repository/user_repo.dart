@@ -31,8 +31,15 @@ class UserRepository{
 
   }
 
-  authenticateUser(){
+  authenticateUser({required String email, required String pass}) async{
 
+    int result = await dbHelper.authenticateUser(email: email, pass: pass);
+
+    return result;
+  }
+
+  Future<UserModel?> getUserDetails() async{
+    return await dbHelper.getUserDetails();
   }
 
 
