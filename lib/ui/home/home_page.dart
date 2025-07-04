@@ -1,6 +1,7 @@
 import 'package:expenso_391/ui/sign_up/bloc/user_bloc.dart';
 import 'package:expenso_391/ui/sign_up/bloc/user_event.dart';
 import 'package:expenso_391/ui/sign_up/bloc/user_state.dart';
+import 'package:expenso_391/utils/app_route/app_routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -240,6 +241,9 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        Navigator.pushNamed(context, AppRoutes.addExpense);
+      }, child: Icon(Icons.add),),
     );
   }
 }

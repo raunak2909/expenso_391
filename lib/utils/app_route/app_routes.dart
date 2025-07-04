@@ -1,4 +1,5 @@
 
+import 'package:expenso_391/ui/add_expense/add_expense_page.dart';
 import 'package:expenso_391/ui/home/home_page.dart';
 import 'package:expenso_391/ui/intro/intro.dart';
 import 'package:expenso_391/ui/sign_up/signup_screen.dart';
@@ -13,6 +14,7 @@ class AppRoutes {
   static const String signup = "/signup";
   static const String home = "/home";
   static const String intro = "/intro";
+  static const String addExpense = "/add-exp";
 
   static Map<String, Widget Function(BuildContext) > routes = {
     splash: (_) => SplashPage(),
@@ -20,6 +22,7 @@ class AppRoutes {
     login: (_) => LoginScreen(),
     signup: (_) => SignupScreen(),
     home: (_) => HomePage(),
+    addExpense: (_) => AddExpensePage(),
 
   };
 }
