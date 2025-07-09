@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../models/expense_model.dart';
 import '../models/user_model.dart';
 
 class DBHelper {
@@ -131,9 +132,13 @@ class DBHelper {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     int userId = prefs.getInt(AppConstants.PREF_USER_ID_KEY) ?? 0;
 
-    var mData = await db.query(TABLE_USER, where: "$COLUMN_USER_ID = ?", whereArgs: ["$userId"]);
+    var mData = await db.query(
+      TABLE_USER,
+      where: "$COLUMN_USER_ID = ?",
+      whereArgs: ["$userId"],
+    );
 
-    if(mData.isNotEmpty){
+    if (mData.isNotEmpty) {
       UserModel currUser = UserModel.fromMap(mData[0]);
       return currUser;
     } else {
@@ -141,5 +146,33 @@ class DBHelper {
     }
   }
 
-  addExpense() async {}
+  Future<bool> addExpense({required ExpenseModel newExp}) async {
+    var db = await initDB();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt(AppConstants.PREF_USER_ID_KEY) ?? 0;
+
+    newExp.uid = userId;
+
+    int rowsEffected = await db.insert(TABLE_EXPENSE, newExp.toMap());
+
+    return rowsEffected > 0;
+  }
+
+  Future<List<ExpenseModel>> getAllExpenses() async {
+    var db = await initDB();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt(AppConstants.PREF_USER_ID_KEY) ?? 0;
+
+    List<Map<String, dynamic>> mData = await db.query(
+      TABLE_EXPENSE,
+      where: "$COLUMN_USER_ID = ?",
+      whereArgs: ["$userId"],
+    );
+    List<ExpenseModel> allExp = [];
+    for(Map<String, dynamic> eachMap in mData){
+      allExp.add(ExpenseModel.fromMap(eachMap));
+    }
+    return allExp;
+  }
 }

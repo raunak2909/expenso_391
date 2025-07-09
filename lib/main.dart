@@ -1,5 +1,7 @@
 import 'package:expenso_391/data/local/helper/db_helper.dart';
+import 'package:expenso_391/data/local/repository/expense_repo.dart';
 import 'package:expenso_391/data/local/repository/user_repo.dart';
+import 'package:expenso_391/ui/bloc/expense_bloc.dart';
 import 'package:expenso_391/ui/sign_up/bloc/user_bloc.dart';
 import 'package:expenso_391/utils/app_route/app_routes.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +9,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
   runApp(
-    BlocProvider(
-      create: (context) =>
-          UserBloc(userRepo:
-          UserRepository(dbHelper:
-          DBHelper.getInstance())),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => UserBloc(
+            userRepo: UserRepository(dbHelper: DBHelper.getInstance()),
+          ),
+        ),
+        BlocProvider(
+          create: (context) => ExpenseBloc(
+            expRepo: ExpenseRepository(dbHelper: DBHelper.getInstance()),
+          ),
+        ),
+      ],
       child: const MyApp(),
     ),
   );
