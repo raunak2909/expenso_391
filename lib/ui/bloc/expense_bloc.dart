@@ -1,3 +1,4 @@
+import 'package:expenso_391/data/local/models/expense_filter_model.dart';
 import 'package:expenso_391/data/local/models/expense_model.dart';
 import 'package:expenso_391/data/local/repository/expense_repo.dart';
 import 'package:expenso_391/ui/bloc/expense_event.dart';
@@ -15,7 +16,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState>{
       bool check =await expRepo.addExpense(newExpense: event.mExp);
 
       if(check){
-        List<ExpenseModel> mExpList = await expRepo.getAllExpenses();
+        List<ExpenseFilteredModel> mExpList = await expRepo.getAllExpenses();
         emit(ExpenseLoadedState(expList: mExpList));
       } else {
         emit(ExpenseErrorState(errorMsg: "Something went wrong"));
@@ -25,7 +26,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState>{
 
     on<FetchInitialExpenseEvent>((event, emit) async{
       emit(ExpenseLoadingState());
-      List<ExpenseModel> mExpList = await expRepo.getAllExpenses();
+      List<ExpenseFilteredModel> mExpList = await expRepo.getAllExpenses();
       emit(ExpenseLoadedState(expList: mExpList));
     });
 

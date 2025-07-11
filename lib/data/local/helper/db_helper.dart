@@ -168,6 +168,7 @@ class DBHelper {
       TABLE_EXPENSE,
       where: "$COLUMN_USER_ID = ?",
       whereArgs: ["$userId"],
+      orderBy: "$COLUMN_EXPENSE_CREATED_AT DESC"
     );
     List<ExpenseModel> allExp = [];
     for(Map<String, dynamic> eachMap in mData){

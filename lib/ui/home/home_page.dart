@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:expenso_391/ui/bloc/expense_bloc.dart';
 import 'package:expenso_391/ui/bloc/expense_event.dart';
 import 'package:expenso_391/ui/bloc/expense_state.dart';
@@ -5,9 +7,12 @@ import 'package:expenso_391/ui/sign_up/bloc/user_bloc.dart';
 import 'package:expenso_391/ui/sign_up/bloc/user_event.dart';
 import 'package:expenso_391/ui/sign_up/bloc/user_state.dart';
 import 'package:expenso_391/utils/app_route/app_routes.dart';
+import 'package:expenso_391/utils/constants/app_constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../data/local/models/expense_model.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -36,6 +41,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     context.read<UserBloc>().add(UserDetailEvent());
+    context.read<ExpenseBloc>().add(FetchInitialExpenseEvent());
   }
 
   @override
@@ -217,12 +223,61 @@ class _HomePageState extends State<HomePage> {
                   return Expanded(
                     child: state.expList.isNotEmpty
                         ? ListView.builder(
+                      padding: EdgeInsets.zero,
                       itemCount: state.expList.length,
                         itemBuilder: (_, index){
-                          return ListTile(
-                            title: Text(state.expList[index].title),
-                            subtitle: Text(state.expList[index].desc),
-                            trailing: Text("\$${state.expList[index].amt.toString()}"),
+                          return Container(
+                            padding: EdgeInsets.all(21),
+                            margin: EdgeInsets.only(bottom: 11),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 2,
+                                color: Colors.grey.shade300,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(state.expList[index].title, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500),),
+                                    Text('${state.expList[index].totalAmt>=0 ? "+ \$${state.expList[index].totalAmt}" : "- \$${(state.expList[index].totalAmt)*-1}"}', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500),)
+                                  ],
+                                ),
+                                Divider(color: Colors.grey.shade300, thickness: 2,),
+                                ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                    itemCount: state.expList[index].mExpList.length,
+                                    itemBuilder: (_, childIndex){
+
+                                    ExpenseModel eachExp = state.expList[index].mExpList[childIndex];
+
+                                    String imgPath = AppConstants.mCat.where((cat){
+                                      return cat.id == eachExp.catId;
+                                    }).toList()[0].imgPath;
+
+                                  return ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: Container(
+                                      width: 50,
+                                      height: 50,
+                                      padding: EdgeInsets.all(8),
+                                      child: Image.asset(imgPath),
+                                      decoration: BoxDecoration(
+                                        color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade100,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                    ),
+                                    title: Text(eachExp.title),
+                                    subtitle: Text(eachExp.desc),
+                                    trailing: Text('${eachExp.type==1?"- ":"+ "}\$${eachExp.amt}', style: TextStyle(fontSize:16, fontWeight: FontWeight.w500, color: eachExp.type==1 ? Colors.redAccent : Colors.green),),
+                                  );
+                                })
+                              ],
+                            ),
                           );
                     })
                         : Center(child: Text('No Expenses yet!!')),
