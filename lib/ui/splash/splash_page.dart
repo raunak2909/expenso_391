@@ -31,7 +31,7 @@ class _SplashPageState extends State<SplashPage> {
       }
 
       if(userId>0){
-        nextPageName = AppRoutes.home;
+        nextPageName = AppRoutes.dashboard;
       }
 
       Navigator.pushReplacementNamed(context, nextPageName);

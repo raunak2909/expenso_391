@@ -16,7 +16,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState>{
       bool check =await expRepo.addExpense(newExpense: event.mExp);
 
       if(check){
-        List<ExpenseFilteredModel> mExpList = await expRepo.getAllExpenses();
+        List<ExpenseFilteredModel> mExpList = await expRepo.getAllExpenses(filterType: event.filterType);
         emit(ExpenseLoadedState(expList: mExpList));
       } else {
         emit(ExpenseErrorState(errorMsg: "Something went wrong"));
@@ -26,7 +26,7 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState>{
 
     on<FetchInitialExpenseEvent>((event, emit) async{
       emit(ExpenseLoadingState());
-      List<ExpenseFilteredModel> mExpList = await expRepo.getAllExpenses();
+      List<ExpenseFilteredModel> mExpList = await expRepo.getAllExpenses(filterType: event.filterType);
       emit(ExpenseLoadedState(expList: mExpList));
     });
 

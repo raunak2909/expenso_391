@@ -65,7 +65,7 @@ class LoginScreen extends StatelessWidget {
                         if(state is UserSuccessState){
                           isLoading = false;
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Successfully logged in")));
-                          Navigator.pushReplacementNamed(context, AppRoutes.home);
+                          Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
                         }
 
                         if(state is UserFailureState){

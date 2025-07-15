@@ -2,6 +2,7 @@ import 'package:expenso_391/data/local/models/expense_model.dart';
 import 'package:expenso_391/ui/bloc/expense_bloc.dart';
 import 'package:expenso_391/ui/bloc/expense_event.dart';
 import 'package:expenso_391/ui/bloc/expense_state.dart';
+import 'package:expenso_391/ui/dashboard_page/provider/navigation_provider.dart';
 import 'package:expenso_391/utils/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ class AddExpensePage extends StatelessWidget {
   var titleController = TextEditingController();
   var descController = TextEditingController();
   var amountController = TextEditingController();
+  int filterType = 1;
 
   List<String> mType = ["Debit", "Credit"];
   String selectedType = "Debit";
@@ -21,6 +23,10 @@ class AddExpensePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    filterType = (ModalRoute.of(context)!.settings.arguments ?? 1) as int ;
+
+
     return Scaffold(
       appBar: AppBar(title: Text('Add Expense')),
       body: Padding(
@@ -202,7 +208,7 @@ class AddExpensePage extends StatelessWidget {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Expense Added Successfully')),
                       );
-                      Navigator.pop(context);
+                      context.read<NavigationProvider>().updatePageIndex(index: 0);
                     }
 
                     if (state is ExpenseErrorState) {
@@ -239,7 +245,7 @@ class AddExpensePage extends StatelessWidget {
                         );
 
                         context.read<ExpenseBloc>().add(
-                          AddExpenseEvent(mExp: newExp),
+                          AddExpenseEvent(mExp: newExp, filterType: filterType),
                         );
                       },
                       child: isAdding ? Row(

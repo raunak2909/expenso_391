@@ -21,6 +21,9 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String selectedMonth = "January";
+  int filterType = 1;
+  String selectedFilterType = "Date wise";
+  List<String> mFilterType = ["Date wise", "Month wise", "Year wise", "Category wise"];
 
   List<String> months = [
     "January",
@@ -41,7 +44,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     context.read<UserBloc>().add(UserDetailEvent());
-    context.read<ExpenseBloc>().add(FetchInitialExpenseEvent());
+    context.read<ExpenseBloc>().add(FetchInitialExpenseEvent(filterType: filterType));
   }
 
   @override
@@ -129,16 +132,26 @@ class _HomePageState extends State<HomePage> {
                       underline: SizedBox(),
                       dropdownColor: Colors.grey.shade200,
                       elevation: 15,
-                      value: selectedMonth,
-                      items: months.map((month) {
+                      value: selectedFilterType,
+                      items: mFilterType.map((filterType) {
                         return DropdownMenuItem(
-                          value: month,
-                          child: Text("$month"),
+                          value: filterType,
+                          child: Text("$filterType"),
                         );
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
-                          selectedMonth = value!;
+                          selectedFilterType = value!;
+                          if(value=="Date wise"){
+                            filterType=1;
+                          } else if(value=="Month wise"){
+                            filterType=2;
+                          } else if(value=="Year wise"){
+                            filterType=3;
+                          } else {
+                            filterType=4;
+                          }
+                          context.read<ExpenseBloc>().add(FetchInitialExpenseEvent(filterType: filterType));
                         });
                       },
                     ),
@@ -190,6 +203,7 @@ class _HomePageState extends State<HomePage> {
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -357,12 +371,12 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
+      /*floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, AppRoutes.addExpense);
+          Navigator.pushNamed(context, AppRoutes.addExpense, arguments: filterType);
         },
         child: Icon(Icons.add),
-      ),
+      ),*/
     );
   }
 }
