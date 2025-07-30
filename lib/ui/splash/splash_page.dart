@@ -41,7 +41,6 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -49,11 +48,16 @@ class _SplashPageState extends State<SplashPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ///FlutterLogo(size: 100,),
-              Image.asset("assets/icons/logo.png", width:200, height: 200, fit: BoxFit.cover),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.blue.withAlpha(50)
+                ),
+                  child: Image.asset("assets/icons/logo.png", width:200, height: 200, fit: BoxFit.cover)),
               SizedBox(height: 11,),
-              Text("Expenso: Easy way to monitor your expenses", style: logoStyle,),
+              Text("Expenso: Easy way to monitor your expenses", style: Theme.of(context).textTheme.headlineLarge, textAlign: TextAlign.center,),
               SizedBox(height: 11,),
-              Text("Stablize your future by taking care of your expenses now", style:  logosubStyle,),
+              Text("Stablize your future by taking care of your expenses now", style:  Theme.of(context).textTheme.bodySmall,textAlign: TextAlign.center,),
               /*FloatingActionButton(
                   onPressed: (){},
                   tooltip: 'Next',

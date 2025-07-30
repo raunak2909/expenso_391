@@ -8,6 +8,7 @@ import 'package:expenso_391/ui/sign_up/bloc/user_event.dart';
 import 'package:expenso_391/ui/sign_up/bloc/user_state.dart';
 import 'package:expenso_391/utils/app_route/app_routes.dart';
 import 'package:expenso_391/utils/constants/app_constants.dart';
+import 'package:expenso_391/utils/ui_helper/styles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TextTheme? txtTheme;
   String selectedMonth = "January";
   int filterType = 1;
   String selectedFilterType = "Date wise";
@@ -49,6 +51,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    txtTheme = Theme.of(context).textTheme;
+
     return Scaffold(
       /* bottomNavigationBar: BottomNavigationBar(items: [
         BottomNavigationBarItem(icon: Icon(CupertinoIcons.home),label: "Home"),
@@ -169,7 +174,8 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.all(20),
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Color(0xFF6674d3),
+                color: Theme.of(context).brightness==Brightness.dark ?  Color(0xFF6674d3) :  Color(
+                    0xff7c8dff),
                 borderRadius: BorderRadius.all(Radius.elliptical(19, 13)),
               ),
               child: Column(
@@ -177,15 +183,11 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Text(
                     "Expense total",
-                    style: TextStyle(color: Colors.white, fontSize: 17),
+                    style: txtTheme!.bodySmall!.copyWith(color: Colors.white),
                   ),
                   Text(
                     "\$8,562",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 43,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: Theme.of(context).textTheme.displayLarge!.copyWith(color: Colors.white)
                   ),
                   Row(
                     children: [
@@ -200,17 +202,13 @@ class _HomePageState extends State<HomePage> {
                         ),
                         child: Text(
                           "+\$240",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                            color: Colors.white,
-                          ),
+                          style: txtTheme!.bodySmall!.copyWith(color: Colors.white)
                         ),
                       ),
                       SizedBox(width: 8),
                       Text(
                         "than last month",
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        style: txtTheme!.bodySmall!.copyWith(color: Colors.white),
                       ),
                     ],
                   ),
@@ -220,7 +218,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 15),
             Text(
               "Expense List",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+              style: txtTheme!.bodyLarge!.copyWith(fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 10),
             BlocBuilder<ExpenseBloc, ExpenseState>(
@@ -240,57 +238,59 @@ class _HomePageState extends State<HomePage> {
                       padding: EdgeInsets.zero,
                       itemCount: state.expList.length,
                         itemBuilder: (_, index){
-                          return Container(
-                            padding: EdgeInsets.all(21),
-                            margin: EdgeInsets.only(bottom: 11),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 2,
-                                color: Colors.grey.shade300,
-                              ),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(state.expList[index].title, style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500),),
-                                    Text('${state.expList[index].totalAmt>=0 ? "+ \$${state.expList[index].totalAmt}" : "- \$${(state.expList[index].totalAmt)*-1}"}', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w500),)
-                                  ],
+                          return Card(
+                            child: Container(
+                              padding: EdgeInsets.all(21),
+                              margin: EdgeInsets.only(bottom: 11),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 2,
+                                  color: Colors.grey.shade300,
                                 ),
-                                Divider(color: Colors.grey.shade300, thickness: 2,),
-                                ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                    itemCount: state.expList[index].mExpList.length,
-                                    itemBuilder: (_, childIndex){
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(state.expList[index].title, style: mTextStyle16(mFontWeight: FontWeight.w600),),
+                                      Text('${state.expList[index].totalAmt>=0 ? "+ \$${state.expList[index].totalAmt}" : "- \$${(state.expList[index].totalAmt)*-1}"}', style: txtTheme!.bodySmall!.copyWith(fontWeight: FontWeight.w600),)
+                                    ],
+                                  ),
+                                  Divider(color: Colors.grey.shade300, thickness: 2,),
+                                  ListView.builder(
+                                    padding: EdgeInsets.zero,
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                      itemCount: state.expList[index].mExpList.length,
+                                      itemBuilder: (_, childIndex){
 
-                                    ExpenseModel eachExp = state.expList[index].mExpList[childIndex];
+                                      ExpenseModel eachExp = state.expList[index].mExpList[childIndex];
 
-                                    String imgPath = AppConstants.mCat.where((cat){
-                                      return cat.id == eachExp.catId;
-                                    }).toList()[0].imgPath;
+                                      String imgPath = AppConstants.mCat.where((cat){
+                                        return cat.id == eachExp.catId;
+                                      }).toList()[0].imgPath;
 
-                                  return ListTile(
-                                    contentPadding: EdgeInsets.zero,
-                                    leading: Container(
-                                      width: 50,
-                                      height: 50,
-                                      padding: EdgeInsets.all(8),
-                                      child: Image.asset(imgPath),
-                                      decoration: BoxDecoration(
-                                        color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade100,
-                                        borderRadius: BorderRadius.circular(6),
+                                    return ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: Container(
+                                        width: 50,
+                                        height: 50,
+                                        padding: EdgeInsets.all(8),
+                                        child: Image.asset(imgPath),
+                                        decoration: BoxDecoration(
+                                          color: Colors.primaries[Random().nextInt(Colors.primaries.length)].shade100,
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
                                       ),
-                                    ),
-                                    title: Text(eachExp.title),
-                                    subtitle: Text(eachExp.desc),
-                                    trailing: Text('${eachExp.type==1?"- ":"+ "}\$${eachExp.amt}', style: TextStyle(fontSize:16, fontWeight: FontWeight.w500, color: eachExp.type==1 ? Colors.redAccent : Colors.green),),
-                                  );
-                                })
-                              ],
+                                      title: Text(eachExp.title, style: mTextStyle16(),),
+                                      subtitle: Text(eachExp.desc, style: mTextStyle12(),),
+                                      trailing: Text('${eachExp.type==1?"- ":"+ "}\$${eachExp.amt}', style: mTextStyle16(textColor: eachExp.type==1 ? Colors.redAccent : Colors.green)),
+                                    );
+                                  })
+                                ],
+                              ),
                             ),
                           );
                     })

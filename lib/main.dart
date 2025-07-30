@@ -35,8 +35,87 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      themeMode: ThemeMode.light,
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        textTheme: TextTheme(
+          displayLarge: TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.w600,
+          ),
+          headlineLarge: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.w600,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 21,
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 19,
+          ),
+          bodySmall: TextStyle(
+            fontSize: 16,
+          ),
+          labelLarge: TextStyle(
+            fontSize: 12,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom()
+        ),
+        cardTheme: CardThemeData(
+            elevation: 7,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(11),
+              side: BorderSide(
+                color: Colors.black12,
+                width: 2,
+              ),
+            )
+        ),
+      ),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        brightness: Brightness.light,
+        textTheme: TextTheme(
+          displayLarge: TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.w600,
+          ),
+          headlineLarge: TextStyle(
+            fontSize: 30,
+            fontWeight: FontWeight.w600,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 21,
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 19,
+          ),
+          bodySmall: TextStyle(
+            fontSize: 16,
+          ),
+          labelLarge: TextStyle(
+            fontSize: 12,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom()
+        ),
+        cardTheme: CardThemeData(
+          elevation: 7,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(11),
+            side: BorderSide(
+              color: Colors.black12,
+              width: 2,
+            ),
+          )
+        ),
+        /*outlinedButtonTheme: ,
+        textButtonTheme: ,
+        inputDecorationTheme: ,
+        cardTheme: ,*/
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.pinkAccent),
       ),
       initialRoute: AppRoutes.splash,
       routes: AppRoutes.routes,
